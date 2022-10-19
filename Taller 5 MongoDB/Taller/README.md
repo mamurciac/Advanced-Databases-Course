@@ -3,7 +3,7 @@
 Usted hace parte de un equipo de análisis de datos para una empresa que realiza inteligencia de negocios. Se ha encargado el análisis de una base de datos de restaurantes de múltiples ciudades. Para ello, se solicitan una serie de consultas sobre la base de datos.
 
 La estructura de los documentos de la base de datos es la siguiente:
-```
+```json
 {
 	"address": {
 		"building": "1007",
