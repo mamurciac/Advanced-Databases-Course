@@ -1,6 +1,9 @@
 //Se selecciona la base de datos agenda (Si no existe, se crea esta nueva base de datos)
 use agenda;
 
+//Se eliminan todos los registros de la base de datos (No se elimina la base de datos, simplemente se eliminan todos sus documentos de esa base de datos y por lo tanto la base de datos consistira en un documento vacio)
+db.agenda.deleteMany({});
+
 //Se agregan registros a la base de datos agenda (Se agregan estos registros individualmente)
 db.agenda.insertOne({_id: 1, name: "Juan", age: 18, gender: "male", contact: {address: "Fake Street 123", phone: "555 123"}});
 db.agenda.insertOne({_id: 2, name: "María", age: 18, gender: "female", contact: {address: "Fake Street 123", phone: "555 987"}});
@@ -47,20 +50,25 @@ db.agenda.find({age : {$lte: 20}});
 //Consulta 13: Se muestran los documentos cuya edad sea distinta a los 19 años, en este caso se usa el operador $ne (not equal) para definir el operador relacional distinto de
 db.agenda.find({age : {$ne: 19}});
 
-9. Filtrar los campos de los documentos obtenidos con una consulta. En este ejemplo sólo el campo name y gender es retornado.
+//Consulta 14: Se muestran los documentos cuya edad sea 18, y se obtienen solamente los campos name y gender de los documentos que cumplan la condicion dada
+db.agenda.find({age: 18}, {name: 1, gender: 1, _id: 0});
 
-> db.agenda.find({age : 18}, {name : 1, gender : 1, _id : 0})
-10. Actualizar un valor en el primer documento que cumple la consulta
+//Actualizacion 1: Se va a actualizar el numero de contacto como Lost al primer documento encontrado que cumpla que el nombre sea Juan
+db.agenda.find({name: "Juan"});
+db.agenda.update({name: "Juan"}, {$set: {"contact.phone": "Lost"}});
+db.agenda.find({name: "Juan"});
 
-> db.agenda.find({name : "Juan"})
-> db.agenda.update({name : "Juan"}, {$set : {"contact.phone" : "Lost"}})
-> db.agenda.find({name : "Juan"})
-11. Actualizar todos los valores de los documentos que cumplan la consulta
+//Actualizacion 2: Se van a actualizar la edad a 21 años de todos los documentos encontrados que cumplan que la edad sea 18
+db.agenda.find({age: 21});
+db.agenda.updateMany({age: 18}, {$set: {age: 21}});
+db.agenda.find({age: 21});
 
-> db.agenda.updateMany({age : 18}, {$set : {age : 21}})
-12. Eliminar el primer documento que cumpla la consulta
+//Eliminacion 1: Se va a eliminar el primer documento de todos los documentos encontrados que cumplan que la edad sea 19
+db.agenda.find({age: 19});
+db.agenda.deleteOne({age: 19});
+db.agenda.find({age: 19});
 
-> db.agenda.deleteOne({age : 19})
-13. Eliminar todos los documentos que cumplan la consulta
-
-> db.agenda.deleteMany({age : 21})
+//Eliminacion 2: Se van a eliminar todos los documentos que cumplan que la edad sea 21
+db.agenda.find({age: 21});
+db.agenda.deleteMany({age: 21});
+db.agenda.find({age: 21});
