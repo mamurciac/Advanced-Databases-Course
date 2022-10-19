@@ -2,11 +2,11 @@
 use agenda;
 
 //Se agregan registros a la base de datos agenda (Se agregan estos registros individualmente)
-db.agenda.insertOne({ _id: 1, name: "Juan", age: 18, gender: "male", contact: { address: "Fake Street 123", phone: "555 123" } });
-db.agenda.insertOne({ _id: 2, name: "María", age: 18, gender: "female", contact: { address: "Fake Street 123", phone: "555 987" } });
+db.agenda.insertOne({_id: 1, name: "Juan", age: 18, gender: "male", contact: {address: "Fake Street 123", phone: "555 123"}});
+db.agenda.insertOne({_id: 2, name: "María", age: 18, gender: "female", contact: {address: "Fake Street 123", phone: "555 987"}});
 
 //Se agregan registros a la base de datos agenda (Se agregan multiples registros en un solo comando, esto se logra juntando los multiples registros en un arreglo)
-db.agenda.insertMany([{ _id: 3, name: "Pedro", age: 19, gender: "male", contact: { address: "Nowhere", phone: "555 444" } }, { _id: 4, name: "Ana", age: 20, gender: "female", contact: { address: "Timesquare", phone: "321 678" } }]);
+db.agenda.insertMany([{_id: 3, name: "Pedro", age: 19, gender: "male", contact: {address: "Nowhere", phone: "555 444"}}, {_id: 4, name: "Ana", age: 20, gender: "female", contact: {address: "Timesquare", phone: "321 678"}}]);
 
 //Consulta 1: Se muestran todos los documentos en la coleccion
 db.agenda.find();
@@ -17,30 +17,36 @@ db.agenda.find({name: "Juan"});
 //Consulta 3: Se muestran los documentos cuya edad sea 18 o 19, es decir, se seleccionan los documentos que contengan alguno de los valores en una lista
 db.agenda.find({age: {$in: [18, 19]}});
 
-//Consulta 4: Se muestran los documentos cuya edad sea 18 y cuyo genero sea male
+//Consulta 4: Se muestran los documentos cuya edad no sea 18 ni 19, es decir, se seleccionan los documentos que no contengan ninguno de los valores en una lista
+db.agenda.find({age: {$nin: [18, 19]}});
+
+//Consulta 5: Se muestran los documentos cuya edad sea 18 y cuyo genero sea male
 db.agenda.find({age: 18, gender: "male"});
 
-//Consulta 5: Se muestran los documentos cuya edad sea 18 o cuyo genero sea male, en este caso se usa el operador $or
-db.agenda.find({$or: [{age : 18}, {gender : "male"}
-]})
+//Consulta 6: Se muestran los documentos cuya edad sea 18 o cuyo genero sea male, en este caso se usa el operador $or
+db.agenda.find({$or: [{age: 18}, {gender: "male"}]});
 
-6. Los documentos con condiciones AND y OR
+//Consulta 7: Se muestran los documentos cuya direccion de contacto sea Fake Street 123 y ademas cuya edad sea 18 o cuyo genero sea male, en este caso se usa el operador $or
+db.agenda.find({"contact.address": "Fake Street 123", $or: [{age: 18}, {gender: "male"}]});
 
-> db.agenda.find({
-"contact.address" : "Fake Street 123",
-$or : [
- {age : 18},
- {gender : "male"}
-]})
-7. Buscar documentos con documentos embebidos
+//Consulta 8: Se muestran los documentos cuya direccion de contacto sea Fake Street 123 y su telefono de contacto sea 555 987, en este caso se seleccionan documentos sobre documentos embebidos
+db.agenda.find({contact: {address: "Fake Street 123", phone: "555 987"}});
 
-> db.agenda.find({
- contact : {address : "Fake Street 123", phone : "555 987"}
-})
-8. Buscar documentos utilizando operadores $lt (less than) y $gt (greater than)
+//Consulta 9: Se muestran los documentos cuya edad sea mayor a los 18 años, en este caso se usa el operador $gt (greater than) para definir el operador relacional mayor que
+db.agenda.find({age : {$gt: 18}});
 
-> db.agenda.find({age : {$gt : 18}})
-> db.agenda.find({age : {$lt : 20}})
+//Consulta 10: Se muestran los documentos cuya edad sea al menos los 18 años, en este caso se usa el operador $gte (greater than equal) para definir el operador relacional mayor o igual que
+db.agenda.find({age : {$gte: 18}});
+
+//Consulta 11: Se muestran los documentos cuya edad sea menor a los 20 años, en este caso se usa el operador $lt (lower than) para definir el operador relacional menor que
+db.agenda.find({age : {$lt: 20}});
+
+//Consulta 12: Se muestran los documentos cuya edad sea a lo sumo los 20 años, en este caso se usa el operador $lte (lower than equal) para definir el operador relacional menor o igual que
+db.agenda.find({age : {$lte: 20}});
+
+//Consulta 13: Se muestran los documentos cuya edad sea distinta a los 19 años, en este caso se usa el operador $ne (not equal) para definir el operador relacional distinto de
+db.agenda.find({age : {$ne: 19}});
+
 9. Filtrar los campos de los documentos obtenidos con una consulta. En este ejemplo sólo el campo name y gender es retornado.
 
 > db.agenda.find({age : 18}, {name : 1, gender : 1, _id : 0})
