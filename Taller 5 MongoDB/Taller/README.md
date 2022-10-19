@@ -144,10 +144,6 @@ db.agenda.find({age: 21});
 db.agenda.deleteMany({age: 21});
 db.agenda.find({age: 21});
 
-```
-
-
-
 test> //Se selecciona la base de datos agenda (Si no existe, se crea esta nueva base de datos)
 
 test> use agenda;
