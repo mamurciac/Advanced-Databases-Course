@@ -72,3 +72,4 @@ db.agenda.find({age: 19});
 db.agenda.find({age: 21});
 db.agenda.deleteMany({age: 21});
 db.agenda.find({age: 21});
+
