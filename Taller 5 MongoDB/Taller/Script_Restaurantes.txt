@@ -1,16 +1,17 @@
-//Creacion de la base de datos y verificacion de que la coleccion de restaurantes no esta presente
-use dbprueba
+//En los siguientes pasos se realiza la verificacion de la importacion del archivo data.json a la coleccion restaurants de la base de datos dbRestaurants
+//Se muestran las bases de datos almacenadas (Se indica el nombre de cada base de datos junto a su espacio de memoria usado para su almacenamiento)
 show dbs
+
+//Se selecciona la base de datos dbRestaurants (Si no existe, se crea esta nueva base de datos)
+use dbRestaurants
+
+//Se muestran las colecciones de documentos almacenadas en la base de datos actual (en este caso la base de datos seleccionada es dbRestaurants)
 show collections
 
-//Parte de carga del archivo data.json, en otra ventana de consola (habiendo instalado previamente mongodb-clients) con el comando
-//mongoimport -db dbprueba --collection restaurants --file /home/michael/Descargas/data.json
-//Referencia en https://docs.mongodb.com/manual/reference/program/mongoimport/#use
+//Se cuenta del numero de documentos registrados en la coleccion de restaurantes (En bases de datos relacionales se asimila al numero de registros (conteo de filas) de una tabla dada)
+db.restaurants.countDocuments();
 
-//Verificacion de que la coleccion de restaurantes ya esta presente
-show dbs
-show collections
-
+//En los siguientes pasos se indica la solucion del Taller de MongoDB (Primera parte)
 //Consulta 1: Todos los restaurantes
 db.restaurants.find()
 
