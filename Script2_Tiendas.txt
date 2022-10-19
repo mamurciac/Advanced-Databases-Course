@@ -5,28 +5,20 @@ use stores;
 db.stores.deleteMany({});
 
 //Se agregan registros a la base de datos stores (Se agregan multiples registros en un solo comando, esto se logra juntando los multiples registros en un arreglo)
-db.stores.insertMany([
-{_id: 1, name: "Java Hut", description: "Coffee and cakes"},
-{_id: 2, name: "Burger Buns", description: "Gourmet hamburgers"},
-{_id: 3, name: "Coffee Shop", description: "Just coffee"},
-{_id: 4, name: "Clothes Clothes Clothes", description: "Discount clothing"},
-{_id: 5, name: "Java Shopping", description: "Indonesian goods"}]);
+db.stores.insertMany([{_id: 1, name: "Java Hut", description: "Coffee and cakes"}, {_id: 2, name: "Burger Buns", description: "Gourmet hamburgers"}, {_id: 3, name: "Coffee Shop", description: "Just coffee"}, {_id: 4, name: "Clothes Clothes Clothes", description: "Discount clothing"}, {_id: 5, name: "Java Shopping", description: "Indonesian goods"}]);
 
-3. Crear índice de texto
+//Se crea un indice de texto que se va a aplicar en ambos campos name y description para posterior analisis textual
+db.stores.createIndex({name: "text", description: "text"});
 
-> db.stores.createIndex({name : "text", description : "text"})
-4. Buscar documentos con cualquiera de los términos especificados
+//Consulta 1: Se muestran los documentos que en name o description contengan cualquiera de los terminos especificados (Java, Coffee o Shop)
+db.stores.find({$text: {$search: "java coffee shop"}});
 
-> db.stores.find({$text : {$search : "java coffee shop"}})
-5. Buscar documentos con la palabra “java” o la frase exacta “coffee shop”
+//Consulta 2: Se muestran los documentos que en name o description contengan la palabra “java” o la frase exacta “coffee shop”
+db.stores.find({$text: {$search: "java \"coffee shop\""}});
 
-> db.stores.find({$text : {$search : "java \"coffee shop\""}})
-6. Buscar documentos que tengan las palabras “java” o “shop” y excluyan el termino “coffee”
+//Consulta 3: Se muestran los documentos que en name o description contengan las palabras “java” o “shop” pero que excluyan el termino “coffee”
+db.stores.find({$text: {$search: "java shop -coffee"}});
 
-> db.stores.find({$text : {$search : "java shop -coffee"}})
-7. Buscar y ordenar los documentos por relevancia con respecto a la consulta
+//Consulta 4: Se muestran los documentos que en name o description contengan cualquiera de los terminos especificados (Java, Coffee o Shop), estos documentos se muestran ordenados por relevancia
+db.stores.find({$text: {$search: "java coffee shop"}}, {score: {$meta: "textScore"}}).sort({score: {$meta: "textScore"}});
 
-> db.stores.find(
-{$text : {$search : "java coffee shop"}},
-{score : {$meta : "textScore"}}
-).sort({score : {$meta : "textScore"}})
