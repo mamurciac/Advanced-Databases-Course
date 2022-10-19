@@ -1,0 +1,48 @@
+//Creacion de la base de datos y verificacion de que la coleccion de restaurantes no esta presente
+use dbprueba
+show dbs
+show collections
+
+//Parte de carga del archivo data.json, en otra ventana de consola (habiendo instalado previamente mongodb-clients) con el comando
+//mongoimport -db dbprueba --collection restaurants --file /home/michael/Descargas/data.json
+//Referencia en https://docs.mongodb.com/manual/reference/program/mongoimport/#use
+
+//Verificacion de que la coleccion de restaurantes ya esta presente
+show dbs
+show collections
+
+//Consulta 1: Todos los restaurantes
+db.restaurants.find()
+
+//Consulta 2: Todos los restaurantes, pero proyectando solo algunas claves
+db.restaurants.find({}, {restaurant_id : 1, name : 1, cuisine : 1})
+
+//Consulta 3: Todos los restaurantes, pero proyectando solo algunas claves, ahora con una clave dentro de un documento embebido
+db.restaurants.find({}, {restaurant_id : 1, name : 1, "address.zipcode" : 1, _id : 0})
+
+//Consulta 4: Restaurantes con la clave borough con valor igual a Manhattan
+db.restaurants.find({borough : "Manhattan"}, {restaurant_id : 1, name : 1, borough : 1, _id : 0})
+
+//Consulta 5: Restaurantes con algún valor de score mayor a 90, en la clave grades, su valor es un arreglo de documentos embedidos en cual está presente la subclave score
+db.restaurants.find({"grades.score" : {$gt : 90}}, {restaurant_id : 1, name : 1, "grades.score" : 1, _id : 0})
+
+//Consulta 6: Restaurantes con algún valor de score mayor a 80 y menor que 90, en la clave grades, su valor es un arreglo de documentos embedidos en cual está presente la subclave score
+db.restaurants.find({"grades.score" : {$gt : 80, $lt : 90}}, {restaurant_id : 1, name : 1, "grades.score" : 1, _id : 0})
+
+//Consulta 7: Restaurantes ubicados en latitud menor a -95.754168, en la clave address, su valor es un documento embebido cuya subclave coord tiene como valor un arreglo, en este caso se debe tener en cuenta el orden de los valores (Pos 0: Latitud, Pos 1: Longitud)
+db.restaurants.find({"address.coord.0" : {$lt : -95.754168}}, {restaurant_id : 1, name : 1, "address.coord" : 1, _id : 0})
+
+//Consulta 8: Restaurantes con valor de cuisine distinto de America, tiene algún grade de valor A y el valor de borough es distinto de Brooklyn
+db.restaurants.find({cuisine : {$ne : "American "}, "grades.grade" : "A", borough : {$ne : "Brooklyn"}}, {restaurant_id : 1, name : 1, cuisine : 1, "grades.grade" : 1, borough : 1, _id : 0})
+
+//Consulta 9: Restaurantes con valor de name que empiezan por Wil
+db.restaurants.find({name : {$regex : /^Wil.*/}}, {restaurant_id : 1, name : 1, _id : 0})
+
+//Consulta 10: Restaurantes con valor de cuisine distinto de America y de Chinese, o con el valor de name comenzando por la palabra Wil. La condicion es de la forma proposicional (!p AND !q) OR r <=> r OR (!p AND !q)
+db.restaurants.find({$or : [{name : {$regex : /^Wil.*/}}, {$and : [{cuisine : {$ne : "American "}}, {cuisine : {$ne : "Chinese"}}]}]}, {restaurant_id : 1, name : 1, cuisine : 1, _id : 0})
+
+//Consulta 11: Restaurantes ordenados ascendentemente por la clave name
+db.restaurants.find({}, {restaurant_id : 1, name : 1, _id : 0}).sort({name : 1})
+
+//Consulta 12: Restaurantes para los cuales existe la clave street en la clave address
+db.restaurants.find({"address.street" : {$exists : true}}, {restaurant_id : 1, name : 1, "address.street" : 1, _id : 0})
