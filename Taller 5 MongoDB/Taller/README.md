@@ -68,7 +68,7 @@ La estructura de los documentos de la base de datos es la siguiente:
 ## Entregable
 Archivo de texto plano con todas las queries de creación de base de datos, carga de datos y consultas.
 
-```
+```bash
 //Se selecciona la base de datos agenda (Si no existe, se crea esta nueva base de datos)
 use agenda;
 
