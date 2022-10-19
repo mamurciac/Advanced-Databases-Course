@@ -1,37 +1,37 @@
 //En los siguientes pasos se realiza la verificacion de la importacion del archivo data.json a la coleccion restaurants de la base de datos dbRestaurants
 //Se muestran las bases de datos almacenadas (Se indica el nombre de cada base de datos junto a su espacio de memoria usado para su almacenamiento)
-show dbs
+show dbs;
 
 //Se selecciona la base de datos dbRestaurants (Si no existe, se crea esta nueva base de datos)
-use dbRestaurants
+use dbRestaurants;
 
 //Se muestran las colecciones de documentos almacenadas en la base de datos actual (en este caso la base de datos seleccionada es dbRestaurants)
-show collections
+show collections;
 
 //Se cuenta del numero de documentos registrados en la coleccion de restaurantes (En bases de datos relacionales se asimila al numero de registros (conteo de filas) de una tabla dada)
 db.restaurants.countDocuments();
 
 //En los siguientes pasos se indica la solucion del Taller de MongoDB (Primera parte)
-//Consulta 1: Todos los restaurantes
-db.restaurants.find()
+//Consulta 1: Se muestran todos los restaurantes
+db.restaurants.find();
 
-//Consulta 2: Todos los restaurantes, pero proyectando solo algunas claves
-db.restaurants.find({}, {restaurant_id : 1, name : 1, cuisine : 1})
+//Consulta 2: Se muestran todos los restaurantes pero proyectando solo las llaves/campos id del restaurante, nombre y especialidad
+db.restaurants.find({}, {restaurant_id: 1, name: 1, cuisine: 1});
 
-//Consulta 3: Todos los restaurantes, pero proyectando solo algunas claves, ahora con una clave dentro de un documento embebido
-db.restaurants.find({}, {restaurant_id : 1, name : 1, "address.zipcode" : 1, _id : 0})
+//Consulta 3: Se muestran todos los restaurantes pero proyectando solo las llaves/campos id del restaurante, nombre y address.zipcode (esta ultima es una llave dentro de un documento embedido), y en este caso sin la llave _id
+db.restaurants.find({}, {restaurant_id: 1, name: 1, "address.zipcode": 1, _id: 0});
 
-//Consulta 4: Restaurantes con la clave borough con valor igual a Manhattan
-db.restaurants.find({borough : "Manhattan"}, {restaurant_id : 1, name : 1, borough : 1, _id : 0})
+//Consulta 4: Se muestran los restaurantes ubicados en la ciudad de Manhattan, pero proyectando solo las llaves/campos id del restaurante, nombre y ciudad, y en este caso sin la llave _id
+db.restaurants.find({borough: "Manhattan"}, {restaurant_id: 1, name: 1, borough: 1, _id: 0});
 
-//Consulta 5: Restaurantes con algún valor de score mayor a 90, en la clave grades, su valor es un arreglo de documentos embedidos en cual está presente la subclave score
-db.restaurants.find({"grades.score" : {$gt : 90}}, {restaurant_id : 1, name : 1, "grades.score" : 1, _id : 0})
+//Consulta 5: Se muestran los restaurantes que tengan al menos un puntaje mayor a 90 (En la llave grades, su valor es un arreglo de documentos en el cual está presente la subllave score), pero proyectando solo las llaves/campos id del restaurante, nombre y listado de puntajes, y en este caso sin la llave _id
+db.restaurants.find({"grades.score": {$gt: 90}}, {restaurant_id: 1, name: 1, "grades.score": 1, _id: 0});
 
-//Consulta 6: Restaurantes con algún valor de score mayor a 80 y menor que 90, en la clave grades, su valor es un arreglo de documentos embedidos en cual está presente la subclave score
-db.restaurants.find({"grades.score" : {$gt : 80, $lt : 90}}, {restaurant_id : 1, name : 1, "grades.score" : 1, _id : 0})
+//Consulta 6: Se muestran los restaurantes que tengan al menos un puntaje mayor a 80 y menor a 90 (En la llave grades, su valor es un arreglo de documentos en el cual está presente la subllave score), pero proyectando solo las llaves/campos id del restaurante, nombre y listado de puntajes, y en este caso sin la llave _id
+db.restaurants.find({"grades.score": {$gt: 80, $lt: 90}}, {restaurant_id: 1, name: 1, "grades.score": 1, _id: 0});
 
-//Consulta 7: Restaurantes ubicados en latitud menor a -95.754168, en la clave address, su valor es un documento embebido cuya subclave coord tiene como valor un arreglo, en este caso se debe tener en cuenta el orden de los valores (Pos 0: Latitud, Pos 1: Longitud)
-db.restaurants.find({"address.coord.0" : {$lt : -95.754168}}, {restaurant_id : 1, name : 1, "address.coord" : 1, _id : 0})
+//Consulta 7: Se muestran los restaurantes ubicados en latitud menor a -95.754168 (En la llave address, su valor es un documento cuya subllave coord tiene como valor un arreglo, en este caso se debe tener en cuenta el orden de los valores (Posicion 0: Latitud, Posicion 1: Longitud)), pero proyectando solo las llaves/campos id del restaurante, nombre y ubicacion de coordenadas, y en este caso sin la llave _id
+db.restaurants.find({"address.coord.0": {$lt: -95.754168}}, {restaurant_id: 1, name: 1, "address.coord": 1, _id: 0});
 
 //Consulta 8: Restaurantes con valor de cuisine distinto de America, tiene algún grade de valor A y el valor de borough es distinto de Brooklyn
 db.restaurants.find({cuisine : {$ne : "American "}, "grades.grade" : "A", borough : {$ne : "Brooklyn"}}, {restaurant_id : 1, name : 1, cuisine : 1, "grades.grade" : 1, borough : 1, _id : 0})
