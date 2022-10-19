@@ -15,39 +15,39 @@ db.restaurants.countDocuments();
 //Consulta 1: Se muestran todos los restaurantes
 db.restaurants.find();
 
-//Consulta 2: Se muestran todos los restaurantes pero proyectando solo las llaves/campos id del restaurante, nombre y especialidad
+//Consulta 2: Se muestran todos los restaurantes pero proyectando solo las claves/campos id del restaurante, nombre y especialidad
 db.restaurants.find({}, {restaurant_id: 1, name: 1, cuisine: 1});
 
-//Consulta 3: Se muestran todos los restaurantes pero proyectando solo las llaves/campos id del restaurante, nombre y address.zipcode (esta ultima es una llave dentro de un documento embedido), y en este caso sin la llave _id
+//Consulta 3: Se muestran todos los restaurantes pero proyectando solo las claves/campos id del restaurante, nombre y address.zipcode (esta ultima es una clave dentro de un documento embedido), y en este caso sin la clave _id
 db.restaurants.find({}, {restaurant_id: 1, name: 1, "address.zipcode": 1, _id: 0});
 
-//Consulta 4: Se muestran los restaurantes ubicados en la ciudad de Manhattan, pero proyectando solo las llaves/campos id del restaurante, nombre y ciudad, y en este caso sin la llave _id
+//Consulta 4: Se muestran los restaurantes ubicados en la ciudad de Manhattan, pero proyectando solo las claves/campos id del restaurante, nombre y ciudad, y en este caso sin la clave _id
 db.restaurants.find({borough: "Manhattan"}, {restaurant_id: 1, name: 1, borough: 1, _id: 0});
 
-//Consulta 5: Se muestran los restaurantes que tengan al menos un puntaje mayor a 90 (En la llave grades, su valor es un arreglo de documentos en el cual está presente la subllave score), pero proyectando solo las llaves/campos id del restaurante, nombre y listado de puntajes, y en este caso sin la llave _id
+//Consulta 5: Se muestran los restaurantes que tengan al menos un puntaje mayor a 90 (En la clave grades, su valor es un arreglo de documentos en el cual está presente la subclave score), pero proyectando solo las claves/campos id del restaurante, nombre y listado de puntajes, y en este caso sin la clave _id
 db.restaurants.find({"grades.score": {$gt: 90}}, {restaurant_id: 1, name: 1, "grades.score": 1, _id: 0});
 
-//Consulta 6: Se muestran los restaurantes que tengan al menos un puntaje mayor a 80 y menor a 90 (En la llave grades, su valor es un arreglo de documentos en el cual está presente la subllave score), pero proyectando solo las llaves/campos id del restaurante, nombre y listado de puntajes, y en este caso sin la llave _id
+//Consulta 6: Se muestran los restaurantes que tengan al menos un puntaje mayor a 80 y menor a 90 (En la clave grades, su valor es un arreglo de documentos en el cual está presente la subclave score), pero proyectando solo las claves/campos id del restaurante, nombre y listado de puntajes, y en este caso sin la clave _id
 db.restaurants.find({"grades.score": {$gt: 80, $lt: 90}}, {restaurant_id: 1, name: 1, "grades.score": 1, _id: 0});
 
-//Consulta 7: Se muestran los restaurantes ubicados en latitud menor a -95.754168 (En la llave address, su valor es un documento cuya subllave coord tiene como valor un arreglo, en este caso se debe tener en cuenta el orden de los valores (Posicion 0: Latitud, Posicion 1: Longitud)), pero proyectando solo las llaves/campos id del restaurante, nombre y ubicacion de coordenadas, y en este caso sin la llave _id
+//Consulta 7: Se muestran los restaurantes ubicados en latitud menor a -95.754168 (En la clave address, su valor es un documento cuya subclave coord tiene como valor un arreglo, en este caso se debe tener en cuenta el orden de los valores (Posicion 0: Latitud, Posicion 1: Longitud)), pero proyectando solo las claves/campos id del restaurante, nombre y ubicacion de coordenadas, y en este caso sin la clave _id
 db.restaurants.find({"address.coord.0": {$lt: -95.754168}}, {restaurant_id: 1, name: 1, "address.coord": 1, _id: 0});
 
-//Consulta 8: Se muestran los restaurantes de especialidad distinta a la cocina americana, tienen alguna calificacion de valor A y no estan en la ciudad de Brooklyn, pero proyectando solo las llaves/campos id del restaurante, nombre, especialidad, calificaciones y ciudad, y en este caso sin la llave _id
+//Consulta 8: Se muestran los restaurantes de especialidad distinta a la cocina americana, tienen alguna calificacion de valor A y no estan en la ciudad de Brooklyn, pero proyectando solo las claves/campos id del restaurante, nombre, especialidad, calificaciones y ciudad, y en este caso sin la clave _id
 db.restaurants.find({cuisine: {$ne: "American "}, "grades.grade": "A", borough: {$ne: "Brooklyn"}}, {restaurant_id: 1, name: 1, cuisine: 1, "grades.grade": 1, borough: 1, _id: 0});
 
-//Consulta 9: Se muestran los restaurantes cuyo nombre empieza por Wil, pero proyectando solo las llaves/campos id del restaurante y nombre, y en este caso sin la llave _id
+//Consulta 9: Se muestran los restaurantes cuyo nombre empieza por Wil, pero proyectando solo las claves/campos id del restaurante y nombre, y en este caso sin la clave _id
 db.restaurants.find({name: {$regex: /^Wil.*/}}, {restaurant_id: 1, name: 1, _id: 0});
 
-//Consulta 10: Se muestran los restaurantes cuya especialidad no sea cocina americana ni cocina china, o cuyo nombre empeza por Wil, en este caso, notese el uso de las proposiciones de la forma (!p AND !q) OR r <=> r OR (!p AND !q), para esto se usan los operadores $and y $or adecuadamente, pero proyectando solo las llaves/campos id del restaurante, nombre y especialidad, y en este caso sin la llave _id
+//Consulta 10: Se muestran los restaurantes cuya especialidad no sea cocina americana ni cocina china, o cuyo nombre empeza por Wil, en este caso, notese el uso de las proposiciones de la forma (!p AND !q) OR r <=> r OR (!p AND !q), para esto se usan los operadores $and y $or adecuadamente, pero proyectando solo las claves/campos id del restaurante, nombre y especialidad, y en este caso sin la clave _id
 db.restaurants.find({$or: [{name: {$regex: /^Wil.*/}}, {$and: [{cuisine: {$ne: "American "}}, {cuisine: {$ne: "Chinese"}}]}]}, {restaurant_id: 1, name: 1, cuisine: 1, _id: 0});
 
-//Consulta 11: Se muestran todos los restaurantes pero proyectando solo las llaves/campos id del restaurante y nombre, en este caso sin la llave _id, con los documentos ordenados ascendentemente por la llave name
+//Consulta 11: Se muestran todos los restaurantes pero proyectando solo las claves/campos id del restaurante y nombre, en este caso sin la clave _id, con los documentos ordenados ascendentemente por la clave name
 db.restaurants.find({}, {restaurant_id: 1, name: 1, _id: 0}).sort({name: 1});
 
-//Consulta 12: Se muestran los restaurantes para los cuales existe la llave street en la clave address
+//Consulta 12: Se muestran los restaurantes para los cuales existe la clave street en la clave address
 db.restaurants.find({"address.street": {$exists: true}}, {restaurant_id: 1, name: 1, "address.street": 1, _id: 0});
 
-//Consulta 13: Se muestran todos los restaurantes pero proyectando solo las llaves/campos id del restaurante y nombre, en este caso sin la llave _id, con los documentos ordenados descendentemente por la llave name
+//Consulta 13: Se muestran todos los restaurantes pero proyectando solo las claves/campos id del restaurante y nombre, en este caso sin la clave _id, con los documentos ordenados descendentemente por la clave name
 db.restaurants.find({}, {restaurant_id: 1, name: 1, _id: 0}).sort({name: -1});
 
