@@ -33,17 +33,21 @@ db.restaurants.find({"grades.score": {$gt: 80, $lt: 90}}, {restaurant_id: 1, nam
 //Consulta 7: Se muestran los restaurantes ubicados en latitud menor a -95.754168 (En la llave address, su valor es un documento cuya subllave coord tiene como valor un arreglo, en este caso se debe tener en cuenta el orden de los valores (Posicion 0: Latitud, Posicion 1: Longitud)), pero proyectando solo las llaves/campos id del restaurante, nombre y ubicacion de coordenadas, y en este caso sin la llave _id
 db.restaurants.find({"address.coord.0": {$lt: -95.754168}}, {restaurant_id: 1, name: 1, "address.coord": 1, _id: 0});
 
-//Consulta 8: Restaurantes con valor de cuisine distinto de America, tiene algún grade de valor A y el valor de borough es distinto de Brooklyn
-db.restaurants.find({cuisine : {$ne : "American "}, "grades.grade" : "A", borough : {$ne : "Brooklyn"}}, {restaurant_id : 1, name : 1, cuisine : 1, "grades.grade" : 1, borough : 1, _id : 0})
+//Consulta 8: Se muestran los restaurantes de especialidad distinta a la cocina americana, tienen alguna calificacion de valor A y no estan en la ciudad de Brooklyn, pero proyectando solo las llaves/campos id del restaurante, nombre, especialidad, calificaciones y ciudad, y en este caso sin la llave _id
+db.restaurants.find({cuisine: {$ne: "American "}, "grades.grade": "A", borough: {$ne: "Brooklyn"}}, {restaurant_id: 1, name: 1, cuisine: 1, "grades.grade": 1, borough: 1, _id: 0});
 
-//Consulta 9: Restaurantes con valor de name que empiezan por Wil
-db.restaurants.find({name : {$regex : /^Wil.*/}}, {restaurant_id : 1, name : 1, _id : 0})
+//Consulta 9: Se muestran los restaurantes cuyo nombre empieza por Wil, pero proyectando solo las llaves/campos id del restaurante y nombre, y en este caso sin la llave _id
+db.restaurants.find({name: {$regex: /^Wil.*/}}, {restaurant_id: 1, name: 1, _id: 0});
 
-//Consulta 10: Restaurantes con valor de cuisine distinto de America y de Chinese, o con el valor de name comenzando por la palabra Wil. La condicion es de la forma proposicional (!p AND !q) OR r <=> r OR (!p AND !q)
-db.restaurants.find({$or : [{name : {$regex : /^Wil.*/}}, {$and : [{cuisine : {$ne : "American "}}, {cuisine : {$ne : "Chinese"}}]}]}, {restaurant_id : 1, name : 1, cuisine : 1, _id : 0})
+//Consulta 10: Se muestran los restaurantes cuya especialidad no sea cocina americana ni cocina china, o cuyo nombre empeza por Wil, en este caso, notese el uso de las proposiciones de la forma (!p AND !q) OR r <=> r OR (!p AND !q), para esto se usan los operadores $and y $or adecuadamente, pero proyectando solo las llaves/campos id del restaurante, nombre y especialidad, y en este caso sin la llave _id
+db.restaurants.find({$or: [{name: {$regex: /^Wil.*/}}, {$and: [{cuisine: {$ne: "American "}}, {cuisine: {$ne: "Chinese"}}]}]}, {restaurant_id: 1, name: 1, cuisine: 1, _id: 0});
 
-//Consulta 11: Restaurantes ordenados ascendentemente por la clave name
-db.restaurants.find({}, {restaurant_id : 1, name : 1, _id : 0}).sort({name : 1})
+//Consulta 11: Se muestran todos los restaurantes pero proyectando solo las llaves/campos id del restaurante y nombre, en este caso sin la llave _id, con los documentos ordenados ascendentemente por la llave name
+db.restaurants.find({}, {restaurant_id: 1, name: 1, _id: 0}).sort({name: 1});
 
-//Consulta 12: Restaurantes para los cuales existe la clave street en la clave address
-db.restaurants.find({"address.street" : {$exists : true}}, {restaurant_id : 1, name : 1, "address.street" : 1, _id : 0})
+//Consulta 12: Se muestran los restaurantes para los cuales existe la llave street en la clave address
+db.restaurants.find({"address.street": {$exists: true}}, {restaurant_id: 1, name: 1, "address.street": 1, _id: 0});
+
+//Consulta 13: Se muestran todos los restaurantes pero proyectando solo las llaves/campos id del restaurante y nombre, en este caso sin la llave _id, con los documentos ordenados descendentemente por la llave name
+db.restaurants.find({}, {restaurant_id: 1, name: 1, _id: 0}).sort({name: -1});
+
