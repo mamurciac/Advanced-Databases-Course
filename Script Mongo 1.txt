@@ -1,9 +1,60 @@
 //Se selecciona la base de datos agenda (Si no existe, se crea esta nueva base de datos)
-use agenda
+use agenda;
 
 //Se agregan registros a la base de datos agenda (Se agregan estos registros individualmente)
-db.agenda.insertOne({ _id: 1, name: "Juan", age: 18, gender: "male", contact: { address: "Fake Street 123", phone: "555 123" } })
-db.agenda.insertOne({ _id: 2, name: "María", age: 18, gender: "female", contact: { address: "Fake Street 123", phone: "555 987" } })
+db.agenda.insertOne({ _id: 1, name: "Juan", age: 18, gender: "male", contact: { address: "Fake Street 123", phone: "555 123" } });
+db.agenda.insertOne({ _id: 2, name: "María", age: 18, gender: "female", contact: { address: "Fake Street 123", phone: "555 987" } });
 
-//Se agregan registros a la base de datos agenda (Se agregan multiples registros en un solo comando; esto se logra juntando los multiples registros en un arreglo)
-db.agenda.insertMany([{ _id: 3, name: "Pedro", age: 19, gender: "male", contact: { address: "Nowhere", phone: "555 444" } }, { _id: 4, name: "Ana", age: 20, gender: "female", contact: { address: "Timesquare", phone: "321 678" } }])
+//Se agregan registros a la base de datos agenda (Se agregan multiples registros en un solo comando, esto se logra juntando los multiples registros en un arreglo)
+db.agenda.insertMany([{ _id: 3, name: "Pedro", age: 19, gender: "male", contact: { address: "Nowhere", phone: "555 444" } }, { _id: 4, name: "Ana", age: 20, gender: "female", contact: { address: "Timesquare", phone: "321 678" } }]);
+
+//Consulta 1: Se muestran todos los documentos en la coleccion
+db.agenda.find();
+
+//Consulta 2: Se muestran los documentos cuyo nombre sea Juan, es decir, se seleccionan los documentos que cumplen con una condicion simple
+db.agenda.find({name: "Juan"});
+
+//Consulta 3: Se muestran los documentos cuya edad sea 18 o 19, es decir, se seleccionan los documentos que contengan alguno de los valores en una lista
+db.agenda.find({age: {$in: [18, 19]}});
+
+//Consulta 4: Se muestran los documentos cuya edad sea 18 y cuyo genero sea male
+db.agenda.find({age: 18, gender: "male"});
+
+//Consulta 5: Se muestran los documentos cuya edad sea 18 o cuyo genero sea male, en este caso se usa el operador $or
+db.agenda.find({$or: [{age : 18}, {gender : "male"}
+]})
+
+6. Los documentos con condiciones AND y OR
+
+> db.agenda.find({
+"contact.address" : "Fake Street 123",
+$or : [
+ {age : 18},
+ {gender : "male"}
+]})
+7. Buscar documentos con documentos embebidos
+
+> db.agenda.find({
+ contact : {address : "Fake Street 123", phone : "555 987"}
+})
+8. Buscar documentos utilizando operadores $lt (less than) y $gt (greater than)
+
+> db.agenda.find({age : {$gt : 18}})
+> db.agenda.find({age : {$lt : 20}})
+9. Filtrar los campos de los documentos obtenidos con una consulta. En este ejemplo sólo el campo name y gender es retornado.
+
+> db.agenda.find({age : 18}, {name : 1, gender : 1, _id : 0})
+10. Actualizar un valor en el primer documento que cumple la consulta
+
+> db.agenda.find({name : "Juan"})
+> db.agenda.update({name : "Juan"}, {$set : {"contact.phone" : "Lost"}})
+> db.agenda.find({name : "Juan"})
+11. Actualizar todos los valores de los documentos que cumplan la consulta
+
+> db.agenda.updateMany({age : 18}, {$set : {age : 21}})
+12. Eliminar el primer documento que cumpla la consulta
+
+> db.agenda.deleteOne({age : 19})
+13. Eliminar todos los documentos que cumplan la consulta
+
+> db.agenda.deleteMany({age : 21})
