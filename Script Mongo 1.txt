@@ -1,0 +1,9 @@
+//Se selecciona la base de datos agenda (Si no existe, se crea esta nueva base de datos)
+use agenda
+
+//Se agregan registros a la base de datos agenda (Se agregan estos registros individualmente)
+db.agenda.insertOne({ _id: 1, name: "Juan", age: 18, gender: "male", contact: { address: "Fake Street 123", phone: "555 123" } })
+db.agenda.insertOne({ _id: 2, name: "María", age: 18, gender: "female", contact: { address: "Fake Street 123", phone: "555 987" } })
+
+//Se agregan registros a la base de datos agenda (Se agregan multiples registros en un solo comando; esto se logra juntando los multiples registros en un arreglo)
+db.agenda.insertMany([{ _id: 3, name: "Pedro", age: 19, gender: "male", contact: { address: "Nowhere", phone: "555 444" } }, { _id: 4, name: "Ana", age: 20, gender: "female", contact: { address: "Timesquare", phone: "321 678" } }])
