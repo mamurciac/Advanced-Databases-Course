@@ -69,7 +69,7 @@ La estructura de los documentos de la base de datos es la siguiente:
 Archivo de texto plano con todas las queries de creación de base de datos, carga de datos y consultas.
 
 # Taller 5: MongoDB (Parte 2, Uso de Map - Reduce)
-Continuando con la coleccion de restaurantess usada en el anterior taller, el siguiente ejemplo cuenta los restaurantes agrupados por zipcode usando Map - Reduce:
+Continuando con la coleccion de restaurantes usada en el anterior taller, el siguiente ejemplo cuenta los restaurantes agrupados por zipcode usando Map - Reduce:
 1. Se crea la función map (Función de mapeo):
 ```js
 var mapFunction = function(){
@@ -82,14 +82,14 @@ var reduceFunction = function(zipcode, restaurants){
 	return restaurants.length;
 };
 ```
-3. Se ejecuta el proceso map-reduce y se guarda en la colección restaurants_count:
+3. Se ejecuta el proceso map-reduce y se guarda en la colección restaurantsCountByZipCode:
 ```
-db.restaurants.mapReduce(mapFunction, reduceFunction, {out: "restaurants_count"});
+db.restaurants.mapReduce(mapFunction, reduceFunction, {out: "restaurantsCountByZipCode"});
 ```
 4. Se consulta la colección generada para verificación:
 ```
 show collections;
-db.restaurants_count.find();
+db.restaurantsCountByZipCode.find();
 ```
 
 ## Ejercicios

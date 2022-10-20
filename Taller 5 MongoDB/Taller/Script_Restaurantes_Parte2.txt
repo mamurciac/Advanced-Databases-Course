@@ -1,0 +1,153 @@
+//En los siguientes pasos se realiza la verificacion de la importacion del archivo data.json a la coleccion restaurants de la base de datos dbRestaurants
+//Se muestran las bases de datos almacenadas (Se indica el nombre de cada base de datos junto a su espacio de memoria usado para su almacenamiento)
+show dbs;
+
+//Se selecciona la base de datos dbRestaurants (Si no existe, se crea esta nueva base de datos)
+use dbRestaurants;
+
+//Se muestran las colecciones de documentos almacenadas en la base de datos actual (en este caso la base de datos seleccionada es dbRestaurants)
+show collections;
+
+//Se cuenta del numero de documentos registrados en la coleccion de restaurantes (En bases de datos relacionales se asimila al numero de registros (conteo de filas) de una tabla dada)
+db.restaurants.countDocuments();
+
+
+//Ejemplo de uso de Map-Reduce (Conteo de restaurantes agrupados por zipcode en forma original [La forma original es usando el conteo como funcion de agregacion])
+//Se crea la funcion map (Funcion de mapeo)
+var mapFunction = function(){
+	emit(this.address.zipcode, this.restaurant_id);
+};
+
+//Se crea la funcion reduce (Funcion de reduccion)
+var reduceFunction = function(zipcode, restaurants){
+	return restaurants.length;
+};
+
+//Se ejecuta el proceso map-reduce y se guarda en la coleccion restaurantsCountByZipCodeForma1
+db.restaurants.mapReduce(mapFunction, reduceFunction, {out: "restaurantsCountByZipCodeForma1"});
+
+//Se muestran las colecciones de documentos almacenadas en la base de datos actual (en este caso la base de datos seleccionada es dbRestaurants)
+show collections;
+
+//Se muestra el resultado del proceso map-reduce
+db.restaurantsCountByZipCodeForma1.find();
+
+
+//Ejemplo de uso de Map-Reduce (Conteo de restaurantes agrupados por zipcode en forma alternativa [La forma alternativa es usando suma como funcion de agregacion])
+//Se crea la funcion map (Funcion de mapeo)
+var mapFunction = function(){
+	emit(this.address.zipcode, {cuenta: 1});
+};
+
+//Se crea la funcion reduce (Funcion de reduccion)
+var reduceFunction = function(zipcode, restaurants){
+	var numeroRestaurantes = {cuenta : 0};
+	for(var indice = 0; indice < restaurants.length; indice++){
+		numeroRestaurantes.cuenta += restaurants[indice].cuenta;
+	}
+	return numeroRestaurantes;
+};
+
+//Se ejecuta el proceso map-reduce y se guarda en la coleccion restaurantsCountByZipCode
+db.restaurants.mapReduce(mapFunction, reduceFunction, {out: "restaurantsCountByZipCodeForma2"});
+
+//Se muestran las colecciones de documentos almacenadas en la base de datos actual (en este caso la base de datos seleccionada es dbRestaurants)
+show collections;
+
+//Se muestra el resultado del proceso map-reduce
+db.restaurantsCountByZipCodeForma2.find();
+
+
+
+
+
+var mapFunction = function(){
+    emit("Cuenta de Restaurantes", {cuenta : 1});
+};
+
+var reduceFunction = function(zipcode, restaurants){
+    var numeroRestaurantes = {cuenta : 0};
+    for(var indice = 0; indice < restaurants.length; indice++){
+        numeroRestaurantes.cuenta += restaurants[indice].cuenta;
+    }
+    return numeroRestaurantes;
+};
+
+db.restaurants.mapReduce(mapFunction, reduceFunction, {out : "cuenta_restaurantes_b", query : {$and : [{"address.coord.0" : {$gt : -75}}, {"address.coord.0" : {$lt : -74}}, {"address.coord.1" : {$gt : 40}}, {"address.coord.0" : {$lt : 42}}]}})
+
+show collections
+db.cuenta_restaurantes_b.find()
+
+
+
+
+
+
+var mapFunction = function(){
+    emit(this.address.zipcode, this.grades);
+};
+
+var reduceFunction = function(zipcode, scores){
+    var puntajesTotales = {suma : 0, cuenta : 0, promedio : 0};
+    for(var indice1 = 0; indice1 < scores.length; indice1++){
+        var listadoPuntajes = scores[indice1];
+        for(var indice2 = 0; indice2 < listadoPuntajes.length; indice2++){
+            puntajesTotales.suma += listadoPuntajes[indice2].score;
+            puntajesTotales.cuenta += 1;
+        }
+    }
+    puntajesTotales.promedio = puntajesTotales.suma / puntajesTotales.cuenta;
+    return puntajesTotales;
+};
+
+db.restaurants.mapReduce(mapFunction, reduceFunction, {out : "cuenta_restaurantes_c"})
+
+show collections
+db.cuenta_restaurantes_c.find()
+
+
+
+
+
+var mapFunction = function(){
+    emit({a: this.cuisine, b: this.name}, this.grades);
+};
+
+var reduceFunction = function(zipcode, scores){
+    var puntajesTotales = {suma : 0, cuenta : 0, promedio : 0};
+    for(var indice1 = 0; indice1 < scores.length; indice1++){
+        var listadoPuntajes = scores[indice1];
+        for(var indice2 = 0; indice2 < listadoPuntajes.length; indice2++){
+            puntajesTotales.suma += listadoPuntajes[indice2].score;
+            puntajesTotales.cuenta += 1;
+        }
+    }
+    puntajesTotales.promedio = puntajesTotales.suma / puntajesTotales.cuenta;
+    return puntajesTotales;
+};
+
+db.restaurants.mapReduce(mapFunction, reduceFunction, {out : "cuenta_restaurantes_d"})
+
+show collections
+db.cuenta_restaurantes_d.find();
+
+var mapFunction = function(){
+    emit(this._id.a, {aaa: this._id.b, bbb: this.value.promedio});
+};
+
+var reduceFunction = function(restaurants, scores){
+    var maxval = scores[0].bbb, restval = scores[0].aaa;
+    for(var indice1 = 1; indice1 < scores.length; indice1++){
+    	if(scores[indice1].bbb > maxval){
+    		maxval = scores[indice1].bbb;
+    		restval = scores[indice1].aaa;
+    	}
+    }
+    return restval;
+};
+
+db.cuenta_restaurantes_d.mapReduce(mapFunction, reduceFunction, {out : "cuenta_restaurantes_e"})
+
+show collections
+db.cuenta_restaurantes_e.find();
+
